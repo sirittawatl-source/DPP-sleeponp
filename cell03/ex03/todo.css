@@ -56,4 +56,37 @@ h1 {
     background-color: #fff1f2;
 }
 
+.confirm-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 1000;
+}
 
+.confirm-box p {
+    margin-bottom: 20px;
+}
+
+.confirm-box button {
+    padding: 8px 25px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirm-box button:first-of-type {
+    background-color: #dc2626;
+    color: white;
+}
+
+.confirm-box button:last-of-type {
+    background-color: #e5e7eb;
+    color: black;
+}
