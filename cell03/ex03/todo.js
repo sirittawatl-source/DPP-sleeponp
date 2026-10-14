@@ -14,20 +14,43 @@ function saveTodos() {
         "; max-age=31536000; path=/; SameSite=Lax";
 }
 
-// Create a TO DO element
+
 function createTodo(text, addToTop = true) {
     const todo = document.createElement("div");
-
     todo.className = "todo-item";
     todo.textContent = text;
 
-    todo.addEventListener("click", function () {
-        const answer = confirm("Do you want to delete this TO DO?");
+    todo.addEventListener("click", function (event) {
+        event.stopPropagation();
 
-        if (answer) {
+        // Create confirmation window
+        const box = document.createElement("div");
+        box.className = "confirm-box";
+
+        const message = document.createElement("p");
+        message.textContent = "Do you want to delete this TO DO?";
+
+        const yesBtn = document.createElement("button");
+        yesBtn.textContent = "Yes";
+
+        const noBtn = document.createElement("button");
+        noBtn.textContent = "No";
+
+        yesBtn.addEventListener("click", function () {
             todo.remove();
             saveTodos();
-        }
+            box.remove();
+        });
+
+        noBtn.addEventListener("click", function () {
+            box.remove();
+        });
+
+        box.appendChild(message);
+        box.appendChild(yesBtn);
+        box.appendChild(noBtn);
+
+        document.body.appendChild(box);
     });
 
     if (addToTop) {
@@ -36,6 +59,7 @@ function createTodo(text, addToTop = true) {
         ftList.appendChild(todo);
     }
 }
+
 
 // Load saved TO DO items from the cookie
 function loadTodos() {
@@ -67,41 +91,15 @@ function loadTodos() {
 }
 
 
-todo.addEventListener("click", function () {
-    // Create confirmation box
-    const box = document.createElement("div");
-    box.className = "confirm-box";
 
-    const message = document.createElement("p");
-    message.textContent = "Do you want to delete this TO DO?";
+newBtn.addEventListener("click", function () {
+    const text = prompt("Enter a new TO DO:");
 
-    // Create Yes button
-    const yesBtn = document.createElement("button");
-    yesBtn.textContent = "Yes";
-
-    yesBtn.addEventListener("click", function (event) {
-        event.stopPropagation();
-        todo.remove();
+    if (text !== null && text.trim() !== "") {
+        createTodo(text.trim());
         saveTodos();
-        box.remove();
-    });
-
-    // Create No button
-    const noBtn = document.createElement("button");
-    noBtn.textContent = "No";
-
-    noBtn.addEventListener("click", function (event) {
-        event.stopPropagation();
-        box.remove();
-    });
-
-    box.appendChild(message);
-    box.appendChild(yesBtn);
-    box.appendChild(noBtn);
-
-    document.body.appendChild(box);
+    }
 });
-
 
 // Load saved items when the page starts
 loadTodos();
