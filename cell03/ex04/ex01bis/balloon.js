@@ -1,31 +1,48 @@
-const balloon = document.getElementById("balloon");
 
-let size = 200;
-let colorIndex = 0;
+$(document).ready(function () {
+    const colors = ["red", "green", "blue"];
 
-const colors = ["red", "green", "blue"];
+    let size = 200;
+    let colorIndex = 0;
 
-balloon.addEventListener("click", function () {
-    size += 10;
+    const balloon = $("#balloon");
 
-    colorIndex = (colorIndex + 1) % 3;
+    balloon.css({
+        width: size + "px",
+        height: size + "px",
+        "background-color": colors[colorIndex],
+        "border-radius": "50%"
+    });
 
-    if (size > 420) {
-        size = 200;
-        colorIndex = 0;
-    }
+    balloon.on("click", function () {
+        size += 10;
+        colorIndex = (colorIndex + 1) % colors.length;
 
-    balloon.style.width = size + "px";
-    balloon.style.height = size + "px";
-    balloon.style.backgroundColor = colors[colorIndex];
-});
+        if (size >= 420) {
+            size = 200;
+            colorIndex = 0;
+        }
 
-balloon.addEventListener("mouseleave", function () {
-    size = Math.max(200, size - 5);
+        balloon.css({
+            width: size + "px",
+            height: size + "px",
+            "background-color": colors[colorIndex]
+        });
+    });
 
-    colorIndex = (colorIndex - 1 + 3) % 3;
+    balloon.on("mouseleave", function () {
+        size -= 5;
 
-    balloon.style.width = size + "px";
-    balloon.style.height = size + "px";
-    balloon.style.backgroundColor = colors[colorIndex];
+        if (size < 200) {
+            size = 200;
+        }
+
+        colorIndex = (colorIndex - 1 + colors.length) % colors.length;
+
+        balloon.css({
+            width: size + "px",
+            height: size + "px",
+            "background-color": colors[colorIndex]
+        });
+    });
 });

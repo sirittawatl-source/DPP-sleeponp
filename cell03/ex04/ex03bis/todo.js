@@ -1,105 +1,102 @@
-const newBtn = document.getElementById("new-btn");
-const ftList = document.getElementById("ft_list");
 
-// Save all TO DO items in a cookie
-function saveTodos() {
-    const todos = [];
+$(document).ready(function () {
+    const newBtn = $("#new-btn");
+    const ftList = $("#ft_list");
 
-    ftList.querySelectorAll(".todo-item").forEach(function (item) {
-        todos.push(item.textContent);
-    });
+    // Save all TO DO items in a cookie
+    function saveTodos() {
+        const todos = [];
 
-    document.cookie =
-        "todos=" + encodeURIComponent(JSON.stringify(todos)) +
-        "; max-age=31536000; path=/; SameSite=Lax";
-}
-
-
-function createTodo(text, addToTop = true) {
-    const todo = document.createElement("div");
-    todo.className = "todo-item";
-    todo.textContent = text;
-
-    todo.addEventListener("click", function (event) {
-        event.stopPropagation();
-
-        // Create confirmation window
-        const box = document.createElement("div");
-        box.className = "confirm-box";
-
-        const message = document.createElement("p");
-        message.textContent = "Do you want to delete this TO DO?";
-
-        const yesBtn = document.createElement("button");
-        yesBtn.textContent = "Yes";
-
-        const noBtn = document.createElement("button");
-        noBtn.textContent = "No";
-
-        yesBtn.addEventListener("click", function () {
-            todo.remove();
-            saveTodos();
-            box.remove();
+        ftList.find(".todo-item").each(function () {
+            todos.push($(this).text());
         });
 
-        noBtn.addEventListener("click", function () {
-            box.remove();
-        });
-
-        box.appendChild(message);
-        box.appendChild(yesBtn);
-        box.appendChild(noBtn);
-
-        document.body.appendChild(box);
-    });
-
-    if (addToTop) {
-        ftList.prepend(todo);
-    } else {
-        ftList.appendChild(todo);
-    }
-}
-
-
-// Load saved TO DO items from the cookie
-function loadTodos() {
-    const cookie = document.cookie
-        .split("; ")
-        .find(function (item) {
-            return item.startsWith("todos=");
-        });
-
-    if (!cookie) {
-        return;
+        document.cookie =
+            "todos=" + encodeURIComponent(JSON.stringify(todos)) +
+            "; max-age=31536000; path=/; SameSite=Lax";
     }
 
-    try {
-        const todos = JSON.parse(
-            decodeURIComponent(cookie.substring("todos=".length))
-        );
+    // Create a new TO DO item
+    function createTodo(text, addToTop = true) {
+        const todo = $("<div>")
+            .addClass("todo-item")
+            .text(text);
 
-        if (Array.isArray(todos)) {
-            todos.forEach(function (text) {
-                if (typeof text === "string") {
-                    createTodo(text, false);
-                }
+        todo.on("click", function (event) {
+            event.stopPropagation();
+
+            // Create confirmation window
+            const box = $("<div>").addClass("confirm-box");
+
+            const message = $("<p>")
+                .text("Do you want to delete this TO DO?");
+
+            const yesBtn = $("<button>")
+                .text("Yes");
+
+            const noBtn = $("<button>")
+                .text("No");
+
+            yesBtn.on("click", function () {
+                todo.remove();
+                saveTodos();
+                box.remove();
             });
+
+            noBtn.on("click", function () {
+                box.remove();
+            });
+
+            box.append(message, yesBtn, noBtn);
+            $("body").append(box);
+        });
+
+        if (addToTop) {
+            ftList.prepend(todo);
+        } else {
+            ftList.append(todo);
         }
-    } catch (error) {
-        console.error("Could not load TO DO items:", error);
     }
-}
 
+    // Load saved TO DO items from the cookie
+    function loadTodos() {
+        const cookie = document.cookie
+            .split("; ")
+            .find(function (item) {
+                return item.startsWith("todos=");
+            });
 
+        if (!cookie) {
+            return;
+        }
 
-newBtn.addEventListener("click", function () {
-    const text = prompt("Enter a new TO DO:");
+        try {
+            const todos = JSON.parse(
+                decodeURIComponent(cookie.substring("todos=".length))
+            );
 
-    if (text !== null && text.trim() !== "") {
-        createTodo(text.trim());
-        saveTodos();
+            if (Array.isArray(todos)) {
+                todos.forEach(function (text) {
+                    if (typeof text === "string") {
+                        createTodo(text, false);
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Could not load TO DO items:", error);
+        }
     }
+
+    // Add a new TO DO when clicking the New button
+    newBtn.on("click", function () {
+        const text = prompt("Enter a new TO DO:");
+
+        if (text !== null && text.trim() !== "") {
+            createTodo(text.trim());
+            saveTodos();
+        }
+    });
+
+    // Load saved items when the page starts
+    loadTodos();
 });
-
-// Load saved items when the page starts
-loadTodos();

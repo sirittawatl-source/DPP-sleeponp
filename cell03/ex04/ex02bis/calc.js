@@ -1,63 +1,59 @@
-const form = document.getElementById("calc-form");
-const left = document.getElementById("left");
-const right = document.getElementById("right");
-const operator = document.getElementById("operator");
 
-form.addEventListener("submit", function (event) {
-    event.preventDefault();
+$(document).ready(function () {
+    $("#calc-form").on("submit", function (event) {
+        event.preventDefault();
 
-    const a = left.value;
-    const b = right.value;
+        const left = $("#left").val().trim();
+        const right = $("#right").val().trim();
+        const operator = $("#operator").val();
 
-    // Check positive integers or zero
-    if (
-        a.trim() === "" ||
-        b.trim() === "" ||
-        !/^\d+$/.test(a) ||
-        !/^\d+$/.test(b)
-    ) {
-        alert("Error :(");
-        return;
-    }
+        // Check that both inputs are non-negative integers
+        if (
+            left === "" ||
+            right === "" ||
+            !/^\d+$/.test(left) ||
+            !/^\d+$/.test(right)
+        ) {
+            alert("Error :(");
+            return;
+        }
 
-    const num1 = Number(a);
-    const num2 = Number(b);
+        const a = Number(left);
+        const b = Number(right);
+        let result;
 
-    // Check division or modulo by zero
-    if ((operator.value === "/" || operator.value === "%") && num2 === 0) {
-        alert("It's over 9000!");
-        return;
-    }
+        // Prevent division or modulo by zero
+        if ((operator === "/" || operator === "%") && b === 0) {
+            alert("It's over 9000!");
+            console.log("It's over 9000!");
+            return;
+        }
 
-    let result;
+        // Perform the calculation
+        switch (operator) {
+            case "+":
+                result = a + b;
+                break;
+            case "-":
+                result = a - b;
+                break;
+            case "*":
+                result = a * b;
+                break;
+            case "/":
+                result = a / b;
+                break;
+            case "%":
+                result = a % b;
+                break;
+        }
 
-    switch (operator.value) {
-        case "+":
-            result = num1 + num2;
-            break;
+        alert(result);
+        console.log(result);
+    });
 
-        case "-":
-            result = num1 - num2;
-            break;
-
-        case "*":
-            result = num1 * num2;
-            break;
-
-        case "/":
-            result = num1 / num2;
-            break;
-
-        case "%":
-            result = num1 % num2;
-            break;
-    }
-
-    alert(result);
-    console.log(result);
+    // Display a reminder every 30 seconds
+    setInterval(function () {
+        alert("Please use me...");
+    }, 30000);
 });
-
-// Alert every 30 seconds
-setInterval(function () {
-    alert("Please, use me...");
-}, 30000);
